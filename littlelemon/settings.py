@@ -129,6 +129,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 LOGIN_URL = '/restaurant/login/'
+LOGOUT_REDIRECT_URL = "home"
+LOGIN_REDIRECT_URL = "home"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -146,4 +148,6 @@ REST_FRAMEWORK = {
 }
 
 
-DJOSER = { "USER_ID_FIELD": "username" }
+DJOSER = { "USER_ID_FIELD": "username",
+          'LOGOUT_ON_PASSWORD_CHANGE': False,
+          'TOKEN_MODEL': None,}

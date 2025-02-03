@@ -12,12 +12,10 @@ class RegisterForm(UserCreationForm):
         
 
 class BookingForm(forms.ModelForm):
-    number_choices = [(i, str(i)) for i in range(1, 7)]  
-    nr_of_guests = forms.ChoiceField(choices=number_choices, label="Number of Guests",widget=forms.Select(attrs={'class': 'form-select custom-width'}))
     
     class Meta:
         model = Booking
-        fields = ['name','nr_of_guests','bookingDate','reservation_time']
+        fields = ['name','no_of_guests','bookingDate','reservation_time']
         
 class CustomChangePasswordForm(PasswordChangeForm):
     old_password = forms.PasswordInput

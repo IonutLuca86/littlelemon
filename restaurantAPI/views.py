@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
+from rest_framework.authtoken.models import Token
 
 # Create your views here.
 def index(request):
@@ -45,6 +46,8 @@ def userInfo(request):
     data = {
         'username': user.username,
         'email': user.email,
+        'firstname': user.first_name,
+        'lastname': user.last_name,
     }
     return render(request, 'userinfo.html',{'context': data})
 
@@ -108,8 +111,11 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 def logout_view(request):
-    logout(request)
-    return redirect('home')
+    if request.method == 'POST':        
+        if request.user.is_authenticated:
+            Token.objects.filter(user=request.user).delete()  
+            logout(request)  
+        return redirect('home')
 
 class ChangePasswordView(PasswordChangeView):
     form_class = PasswordChangeForm

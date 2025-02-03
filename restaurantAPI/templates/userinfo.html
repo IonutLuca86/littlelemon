@@ -3,10 +3,15 @@
 
 {% block content %}
 {% if user.is_authenticated %}
+<div class="container my-5 " style="max-width: 500px;">
+<h1>User Information</h1>
  <div class="d-flex flex-column justify-content-start align-item-center">
-        <h1>{{context.username}}</h1>
-        <h3>{{context.email}}</h3>
+        <h3>Username:  {{context.username}}</h3>
+        <h3>First name: {{context.firstname}}</h3>
+        <h3>Last name: {{context.lastname}}</h3>
+        <h3>Email address: {{context.email}}</h3>
         <a href="{% url 'change_password' %}" class="btn btn-outline-secondary" style="width: 180px;">Change Password</a>
     </div>
     {% endif %}
+</div>
  {% endblock %}

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load custom_filters %}
+
 
 {% block content %}
 <div class="container my-5" style="max-width: 600px;">
@@ -38,23 +38,7 @@
             <select id="reservation_slot" class="form-control">
             <option value="0" disabled>Select time</option>
             </select>
-        </p>
-        <!-- <div class="mb-3">
-            <label for="{{ form.name.id_for_label }}" class="form-label">Your Name</label>
-            {{ form.name|add_class:"form-control" }}
-        </div>
-        <div class="mb-3 d-flex flex-row justify-content-start align-item-center">
-            <label for="{{ form.nr_of_guests.id_for_label }}" class="form-label me-5">Number of Guests</label> 
-            <div>{{ form.nr_of_guests}} </div>           
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.bookingDate.id_for_label }}" class="form-label">Booking Date</label>
-            {{ form.bookingDate|add_class:"form-control" }}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.reservation_time.id_for_label }}" class="form-label">Reservation Time</label>
-            {{ form.reservation_time|add_class:"form-control" }}
-        </div>-->
+        </p>       
 
         <div class="mb-3">
             <button type="submit" class="btn btn-outline-primary px-5">Book Now</button>
