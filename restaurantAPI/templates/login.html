@@ -1,0 +1,15 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+<div class="container my-5 " style="max-width: 500px;">
+    <h2>Login</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}  
+        <button type="submit" class="btn btn-outline-primary px-5" >Login</button>  
+       
+    </form>
+    <h4 class="mt-5">Not registered ? </h4>
+    <a href="{% url 'register' %}" class="btn btn-outline-primary px-5">Register</a>
+</div>
+{% endblock %}

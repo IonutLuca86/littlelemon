@@ -1,0 +1,16 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
+<div class="d-flex flex-column flex-lg-row justify-content-evenly align-item-center my-5">
+    <img src="{% static 'img/nedladdning.jpeg' %}" alt="{{item.tile}} image" />
+    <div class="d-flex flex-column justify-content-start align-item-center">
+        <h1>{{item.title}}</h1>
+        <h3>{{item.description}}</h3>
+        <br><br>
+        <h3 >Price per portion : <span class="text-info">{{item.price}}$</span></h3>
+    </div>
+
+</div>
+
+ {% endblock %}

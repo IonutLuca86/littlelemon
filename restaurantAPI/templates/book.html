@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container my-5" style="max-width: 600px;">
+    <h2>Book a Table</h2>
+    
+    <!-- Display errors if the form is not valid -->
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+    
+    <form method="post">
+        {% csrf_token %}  
+        <p>
+            <label for="first_name">Name:</label>
+            <input type="text" class="form-control" placeholder="Your Name" maxlength="200" required="" id="first_name">
+        </p>
+        <p>
+            <label for="nr_of_guests">Number of guests:</label>
+            <input type="number" class="form-control" placeholder="Number of Guests" maxlength="20" required="" id="nr_of_guests">
+        </p>
+        <p>
+            <label for="reservation_date">Date</label>
+            <input type="date" class="form-control" required="" id="reservation_date"></input>         
+        </p>      
+        <p>
+            <label for="reservation_slot">Reservation time:</label>
+            <select id="reservation_slot" class="form-control">
+            <option value="0" disabled>Select time</option>
+            </select>
+        </p>
+        <!-- <div class="mb-3">
+            <label for="{{ form.name.id_for_label }}" class="form-label">Your Name</label>
+            {{ form.name|add_class:"form-control" }}
+        </div>
+        <div class="mb-3 d-flex flex-row justify-content-start align-item-center">
+            <label for="{{ form.nr_of_guests.id_for_label }}" class="form-label me-5">Number of Guests</label> 
+            <div>{{ form.nr_of_guests}} </div>           
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.bookingDate.id_for_label }}" class="form-label">Booking Date</label>
+            {{ form.bookingDate|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.reservation_time.id_for_label }}" class="form-label">Reservation Time</label>
+            {{ form.reservation_time|add_class:"form-control" }}
+        </div>-->
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-outline-primary px-5">Book Now</button>
+        </div> 
+    </form>
+</div>
+{% endblock %}
+
+<script>
+    const date = new Date()
+    document.getElementById('reservation_date').value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
+
+    getBookings();
+
+    var reservation_date = document.getElementById('reservation_date');
+    reservation_date.addEventListener('change', function (e) {
+    getBookings()
+    })
+
+    function getBookings() {
+    let reserved_slots = []
+    const date = document.getElementById('reservation_date').value
+    document.getElementById('today').innerHTML = date
+
+    fetch("{% url 'bookings' %}" + '?date=' + date)
+        .then(r => r.json())
+        .then(data => {
+        console.log(data)
+        let bookings = ''
+        
+        /* Step 11: Part three */
+        data.forEach(booking => {
+            reserved_slots.push(booking.fields.reservation_slot)
+            bookings += `<p>${booking.fields.first_name} - ${booking.fields.reservation_slot}</p>`
+        })
+
+        /* Corrected logic for populating reservation time options */
+        let slot_options = '<option value="0" disabled>Select time</option>';
+        for (let i = 9; i < 21; i++) {
+            var label = formatTime(i);
+            if (!reserved_slots.includes(i)) {            
+            slot_options += `<option value="${i}">${label}</option>`;
+            }
+            else {
+            slot_options += `<option value="${i}" disabled>${label}</option>`;
+            }
+        }
+        
+        document.getElementById('reservation_slot').innerHTML = slot_options
+        if(bookings==''){
+            bookings = "No bookings"
+        }
+        document.getElementById('bookings').innerHTML = bookings
+        })
+    }
+
+    function formatTime(time) {
+    const ampm = time < 12 ? 'AM' : 'PM'
+    const t = time < 12 ? time : time > 12 ? time - 12 : time
+    const label = `${t} ${ampm}`
+    return label
+    }
+
+
+    document.getElementById('button').addEventListener('click', function (e) {
+    const formdata = {
+        first_name: document.getElementById('first_name').value,
+        reservation_date: document.getElementById('reservation_date').value,
+        reservation_slot: document.getElementById('reservation_slot').value,
+    }
+
+    fetch("{% url 'bookings' %}", { method: 'post', body: JSON.stringify(formdata) })
+        .then(r => r.text())
+        .then(data => {
+        getBookings()
+        })
+    })
+</script>

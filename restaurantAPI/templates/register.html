@@ -1,0 +1,26 @@
+{% extends 'base.html' %} 
+{% load static %}
+{% block content %}
+<div class="container my-5 " style="max-width: 500px;">
+    <h2>Register</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}  
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+
+            {% if field.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+        <button type="submit" class="btn btn-outline-primary px-5 mt-5" >Register</button>  
+       
+    </form>
+</div>
+{% endblock %}

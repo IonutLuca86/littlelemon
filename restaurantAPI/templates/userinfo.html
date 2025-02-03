@@ -1,0 +1,12 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
+{% if user.is_authenticated %}
+ <div class="d-flex flex-column justify-content-start align-item-center">
+        <h1>{{context.username}}</h1>
+        <h3>{{context.email}}</h3>
+        <a href="{% url 'change_password' %}" class="btn btn-outline-secondary" style="width: 180px;">Change Password</a>
+    </div>
+    {% endif %}
+ {% endblock %}
