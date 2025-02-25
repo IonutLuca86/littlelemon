@@ -14,8 +14,8 @@
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'about' %}">About</a></li>
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'menu' %}">Menu</a></li>
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Book</a></li>
-            {% if user.is_authenticated and user|has_group:"StaffMember" %}
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Add Menu Item</a></li>
+            {% if user.is_authenticated and user|has_group:"Employee" %}
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'add_item' %}">Add Menu Item</a></li>
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Check Reservations</a></li>
             {% endif %}
         </ul>
@@ -27,7 +27,7 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-light">Logout</button>
                 </form>
-            <!-- <a href="{% url 'logout' %}" class="btn btn-outline-light">Logout</a> -->
+           
         </div>        
         {% else %}
         <a class="btn btn-outline-light mx-3" href="{% url 'login' %}">Login</a>

@@ -3,51 +3,76 @@
 
 
 {% block content %}
-<div class="container my-5" style="max-width: 600px;">
-    <h2>Book a Table</h2>
+<div class="container my-5 d-flex flex-column flex-md-row justify-content-evenly aling-item-center" >
+    <div>
+        <h2>Book a Table</h2>
     
-    <!-- Display errors if the form is not valid -->
-    {% if form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field in form %}
-                    {% for error in field.errors %}
-                        <li>{{ error }}</li>
+        <form method="post" class="container" style="width: 350px;">
+            {% csrf_token %}  
+        
+            <!-- Display form errors properly -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|capfirst }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        
+            <p>
+                <label for="{{ form.name.id_for_label }}">Name:</label>
+                {{ form.name }}
+            </p>
+            <p>
+                <label for="{{ form.no_of_guests.id_for_label }}">Number of guests:</label>
+                {{ form.no_of_guests }}
+            </p>
+            <p>
+                <label for="{{ form.bookingDate.id_for_label }}">Date:</label>
+                {{ form.bookingDate }}
+            </p>      
+            <p>
+                <label for="{{ form.reservation_time.id_for_label }}">Reservation time:</label>
+                <select name="reservation_time" id="{{ form.reservation_time.id_for_label }}" class="form-control">
+                    <option value="" disabled selected>Select time</option>
+                    {% for slot in available_slots %}
+                        <option value="{{ slot }}">{{ slot }}:00</option>
                     {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
+                </select>
+            </p>       
+        
+            <div class="mb-3">
+                <button type="submit" class="btn btn-outline-primary px-5">Book Now</button>
+            </div> 
+        </form>
+    </div>
+    {% if user_bookings %}
+    <div>
+        <h2> Your Reservations</h2>
+        <ul class="list-group">
+            {% for booking in user_bookings %}
+                <li class="list-group-item">
+                    {{ booking.bookingDate }} at {{ booking.reservation_time }}:00 for {{ booking.no_of_guests }} guests
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}  
-        <p>
-            <label for="first_name">Name:</label>
-            <input type="text" class="form-control" placeholder="Your Name" maxlength="200" required="" id="first_name">
-        </p>
-        <p>
-            <label for="nr_of_guests">Number of guests:</label>
-            <input type="number" class="form-control" placeholder="Number of Guests" maxlength="20" required="" id="nr_of_guests">
-        </p>
-        <p>
-            <label for="reservation_date">Date</label>
-            <input type="date" class="form-control" required="" id="reservation_date"></input>         
-        </p>      
-        <p>
-            <label for="reservation_slot">Reservation time:</label>
-            <select id="reservation_slot" class="form-control">
-            <option value="0" disabled>Select time</option>
-            </select>
-        </p>       
-
-        <div class="mb-3">
-            <button type="submit" class="btn btn-outline-primary px-5">Book Now</button>
-        </div> 
-    </form>
 </div>
 {% endblock %}
 
 <script>
+    document.getElementById('bookingDate').addEventListener('change', function () {
+        let selectedDate = this.value;
+        window.location.href = "?date=" + selectedDate;
+    });
+</script>
+
+<!-- <script>
     const date = new Date()
     document.getElementById('reservation_date').value = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}`
 
@@ -69,13 +94,13 @@
         console.log(data)
         let bookings = ''
         
-        /* Step 11: Part three */
+ 
         data.forEach(booking => {
-            reserved_slots.push(booking.fields.reservation_slot)
-            bookings += `<p>${booking.fields.first_name} - ${booking.fields.reservation_slot}</p>`
+            reserved_slots.push(booking.fields.reservation_time)
+            bookings += `<p>${booking.fields.first_name} - ${booking.fields.reservation_time}</p>`
         })
 
-        /* Corrected logic for populating reservation time options */
+
         let slot_options = '<option value="0" disabled>Select time</option>';
         for (let i = 9; i < 21; i++) {
             var label = formatTime(i);
@@ -116,4 +141,4 @@
         getBookings()
         })
     })
-</script>
+</script> -->
