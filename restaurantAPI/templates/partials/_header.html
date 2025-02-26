@@ -15,8 +15,14 @@
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'menu' %}">Menu</a></li>
             <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Book</a></li>
             {% if user.is_authenticated and user|has_group:"Employee" %}
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'add_item' %}">Add Menu Item</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Check Reservations</a></li>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary text-white my-3" type="button" id="staffDropdown" data-bs-toggle="dropdown" aria-expanded="false">Staff Menu</button>
+                <ul class="dropdown-menu" aria-labelledby="staffDropdown">
+                    <li class="dropdown-item"><a class="nav-link " href="{% url 'add_item' %}">Add Menu Item</a></li>
+                    <li class="dropdown-item"><a class="nav-link " href="{% url 'bookings' %}">Check Reservations</a></li>
+                </ul>
+            </div>
+            
             {% endif %}
         </ul>
         {% if user.is_authenticated %}

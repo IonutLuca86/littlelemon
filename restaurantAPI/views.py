@@ -1,8 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from rest_framework import generics, viewsets
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import  permission_classes
 from .models import Menu, Booking
-from .serializers import MenuItemSerializer, BookingSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
@@ -103,7 +101,64 @@ def book(request):
                'selected_date': selected_date,
                'user_bookings': user_bookings}
     return render(request, 'book.html', context)
-   
+
+
+@login_required
+def single_booking(request,pk):
+    item = Booking.objects.get(pk=pk)
+    return render(request, 'booking.html', {'item': item}) 
+
+
+@login_required
+def delete_booking(request,pk):
+    if request.method == 'POST':
+        item = get_object_or_404(Booking,pk=pk)
+        if request.user == item.user_id or request.user.groups.filter(name="Employee").exists():
+            time_now = datetime.datetime.now().hour
+            if item.reservation_time - time_now > 4:
+                item.delete()
+                messages.success(request, "Reservation has been deleted successfully!")
+                return redirect('book')
+            else:
+                messages.error(request, "The reservation cannot be canceled with less then 4 hours before!")
+        else:
+            messages.error(request, "You are not allowed to cancel this reservation!")
+
+            
+
+@login_required
+def edit_booking(request,pk):
+    item = get_object_or_404(Booking,pk=pk)
+    if request.user == item.user_id or request.user.groups.filter(name="Employee").exists():
+        selected_date = item.bookingDate 
+        booked_slots = Booking.objects.filter(bookingDate=selected_date).exclude(pk=item.pk).values_list('reservation_time', flat=True)
+
+        all_slots = list(range(9, 21))
+        current_hour = datetime.datetime.now().hour
+        if selected_date == datetime.date.today():
+            all_slots = [slot for slot in all_slots if slot > current_hour]
+        available_slots = [slot for slot in all_slots if slot not in booked_slots]
+        form = BookingForm(instance=item)
+        if request.method == 'POST':
+            form = BookingForm(request.POST, instance=item)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Reservation has been successfully modified!")
+                return redirect('booking',pk=pk)
+                    
+        return render(request, 'edit_booking.html', {'form': form, 'item': item, 'available_slots': available_slots})
+    else:
+        messages.error(request, "You are not allowed to modify this reservation")
+        return redirect('booking',pk=pk)
+
+@login_required
+def all_reservations(request):
+    if request.user.groups.filter(name="Employee").exists():
+        bookings = Booking.objects.all()
+        return render(request, 'bookings.html', {'bookings': bookings})
+    else:
+        messages.error(request, "You are not allowed to view all reservations")
+        return redirect('home')
 
 
 @login_required
@@ -119,38 +174,15 @@ def userInfo(request):
     return render(request, 'userinfo.html',{'context': data})
 
 
-# @api_view()
-# @permission_classes([IsAuthenticated])
-# def msg(request):
-#     return Response({'msg':'This view is protected'})
-
-class MenuItemList(generics.ListCreateAPIView):
-    queryset = Menu.objects.all()
-    serializer_class = MenuItemSerializer
-    
-
-class MenuItemDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Menu.objects.all()
-    serializer_class = MenuItemSerializer
-
-class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.all()
-    serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated]
-    
-# def MenuItemsView(request):
-#     queryset = Menu.objects.all()
-#     permission_classes = [IsAuthenticated]
-#     serializer_class = MenuItemSerializer
-    
-
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save(commit=False)
             username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
+            password = form.cleaned_data.get('password1')
+            user.set_password(password)
+            user.save()
             
             customer_group = Group.objects.get(name='customer')
             user.groups.add(customer_group)
@@ -162,6 +194,7 @@ def register(request):
         form = RegisterForm()
         
     return render(request, 'register.html', {'form': form})   
+
     
 def user_login(request):
     if request.method == 'POST':
@@ -177,12 +210,14 @@ def user_login(request):
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
+
 def logout_view(request):
     if request.method == 'POST':        
         if request.user.is_authenticated:
             Token.objects.filter(user=request.user).delete()  
             logout(request)  
         return redirect('home')
+    
 
 class ChangePasswordView(PasswordChangeView):
     form_class = PasswordChangeForm

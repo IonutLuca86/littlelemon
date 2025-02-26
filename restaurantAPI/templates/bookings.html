@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container my-5 d-flex flex-column flex-md-row justify-content-evenly aling-item-center" >
+
+    <div>
+        <h2> All Reservations</h2>
+        {% regroup bookings by bookingDate as grouped_bookings %}
+
+        {% for group in grouped_bookings %}
+            <div class="mb-4">
+                <h2 class="text-center">{{ group.grouper }}</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Guests</th>
+                            <th>Name</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in group.list %}
+                            <tr>
+                                <td>{{ booking.reservation_time }}:00</td>
+                                <td>{{ booking.no_of_guests }}</td>
+                                <td>{{ booking.name }}</td>
+                                <td>
+                                    <a href="{% url 'booking' booking.id %}" class="btn btn-outline-secondary btn-sm">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        </ul>
+    </div>
+
+</div>
+{% endblock %}

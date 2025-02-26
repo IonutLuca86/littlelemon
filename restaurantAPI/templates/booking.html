@@ -1,0 +1,31 @@
+{% extends 'base.html' %} 
+{% load static %}
+
+{% block content %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+
+    <div class="d-flex flex-column justify-content-start align-item-center my-5">
+        <h2 class="align-self-center">A reservation has been made on <span class="text-info">
+            {{item.bookingDate}}
+        </span> at <span class="text-info">{{item.reservation_time}}</span> for 
+        <span class="text-info">{{item.no_of_guests}}</span> guests, on the name : 
+        <span class="text-info">{{item.name}}</span></h2>
+
+        <div class="d-flex flex-lg-row justify-content-evenly align-item-center">    
+            <a href="{% url 'edit_booking' item.id %}" class="btn btn-outline-secondary">Modify Reservation</a>
+            <form action="{% url 'delete_booking' item.id %}" method="POST" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Delete Reservation</button>
+            </form>
+
+    </div>
+    </div>
+
+
+
+ {% endblock %}
