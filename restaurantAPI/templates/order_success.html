@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container text-center mt-5">
+    <h2> Order Placed Successfully! </h2>
+    <p>Thank you for shopping with us. Your order will be delivered soon!</p>
+    <a href="{% url 'store:menu' %}" class="btn btn-outline-primary">Continue Shopping</a>
+</div>
+{% endblock %}

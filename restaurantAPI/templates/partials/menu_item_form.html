@@ -10,5 +10,5 @@
 {% csrf_token %}
 {{ form.as_p }}  
 <button type="submit" class="btn btn-primary">Save Changes</button>
-<a href="{% url 'menu_item' item.id %}" class="btn btn-secondary">Cancel</a>
+<a href="{% url 'store:menu_item' item.id %}" class="btn btn-secondary">Cancel</a>
 </form>

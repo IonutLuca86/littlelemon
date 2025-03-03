@@ -8,10 +8,10 @@
       <p>
         30% Off This Weekend 
       </p>
-      <a href="{% url 'book' %}" class="cta"> Book now </a>
+      <a href="{% url 'store:book' %}" class="cta"> Book now </a>
     </article>
   </section>
-  <section>
+  <section class="row">
     <article>
       <h2>Our New Menu</h2>
       <img src="{% static 'img/grill.jpg' %}">
@@ -19,7 +19,7 @@
         Our menu consists of 12-15 seasonal items based on Italian, Greek, and Turkish culture.
       </p>
       <p>
-        <a href="{% url 'menu' %}">See our new menu</a>
+        <a href="{% url 'store:menu' %}">See our new menu</a>
       </p>
     </article>
     <article>
@@ -29,7 +29,7 @@
         Reserve your table for an Italian, Greek, and Turkish dining experience.
       </p>
       <p>
-        <a href="{% url 'book' %}">Book your table now</a>
+        <a href="{% url 'store:book' %}">Book your table now</a>
       </p>
     </article>
     <article>

@@ -34,3 +34,18 @@ class MenuForm(forms.ModelForm):
     class Meta:
         model = Menu
         fields = ['title','description','price','inventory']
+        
+        
+class CheckoutForm(forms.Form):
+    full_name = forms.CharField(max_length=100, required=True, 
+                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+    phone_number = forms.CharField(max_length=10, min_length=10, required=True, 
+                                  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123 456 78 90'}))
+    address = forms.CharField(max_length=255, required=True, 
+                              widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
+    card_number = forms.CharField(max_length=16, min_length=16, required=True, 
+                                  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '1234 5678 9012 3456'}))
+    expiration_date = forms.CharField(max_length=5, required=True, 
+                                      widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'MM/YY'}))
+    cvv = forms.CharField(max_length=3, min_length=3, required=True, 
+                          widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'CVV'}))

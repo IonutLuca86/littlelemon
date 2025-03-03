@@ -3,10 +3,11 @@
 
 
 {% block content %}
+{% if user.is_authenticated %}
 <div class="container my-5 d-flex flex-column flex-md-row justify-content-evenly aling-item-center" >
     <div>
         <h2>Book a Table</h2>
-
+      
         {% include 'partials/booking_form.html' %}    
 
     </div>
@@ -16,13 +17,20 @@
         <ul class="list-group">
             {% for booking in user_bookings %}
                 <li class="list-group-item">
-                    <a href="{% url 'booking' booking.id %}" class="btn btn-outline-secondary">{{ booking.bookingDate }} at {{ booking.reservation_time }}:00 for {{ booking.no_of_guests }} guests</a>
+                    <a href="{% url 'store:booking' booking.id %}" class="btn btn-outline-secondary">{{ booking.bookingDate }} at {{ booking.reservation_time }}:00 for {{ booking.no_of_guests }} guests</a>
                 </li>
             {% endfor %}
         </ul>
     </div>
     {% endif %}
 </div>
+{% else %}
+<div>
+    <h2>You must 
+        <a href="{% url 'store:login' %}">login</a> or 
+        <a href="{% url 'store:register' %}">register</a> to be able to make reservations!</h2>
+</div>
+{% endif %}
 {% endblock %}
 
 <script>

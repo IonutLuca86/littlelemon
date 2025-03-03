@@ -3,18 +3,10 @@
 
 {% block content %}
 <h1>Menu</h1>
-<!--Begin col-->
+
 <div class="d-flex flex-wrap">
     {% for item in menu %}
-    <!-- <p>
-        <a href="{% url 'menu_item' pk=item.pk %}">
-            {{ item.name }}
-            </a>
-        <span class="menu-price">
-            ${{ item.price }}.00
-        </span>
-    </p> -->
-    <a href="{% url 'menu_item' pk=item.pk %}" class="card" style="width: 18rem;">
+    <a href="{% url 'store:menu_item' pk=item.pk %}" class="card" style="width: 18rem;">
         <img class="card-img-top" src="{% static 'img/nedladdning.jpeg' %}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">{{item.title}}</h5>

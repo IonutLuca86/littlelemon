@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import RegisterForm, BookingForm, MenuForm
+from .forms import RegisterForm, BookingForm, MenuForm, CheckoutForm
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
@@ -161,6 +161,98 @@ def all_reservations(request):
         return redirect('home')
 
 
+def cart(request, pk):
+    product = Menu.objects.get(pk=pk)
+    cart = request.session.get('cart', {})
+    cart_item = cart.get(str(pk))
+    
+    if cart_item:
+        cart_item['quantity'] += 1
+    else:
+        cart_item = {
+            'quantity': 1,
+            'product_id': product.id,
+            'product_name': product.title,
+            'price': float(product.price) }
+    
+    cart[str(pk)] = cart_item
+    request.session['cart'] = cart
+    request.session.modified = True
+    return redirect('store:view_cart')
+
+
+def view_cart(request):
+    cart = request.session.get('cart', {})
+    cart_items = []
+    total_price = 0
+
+    for product_id, cart_item in cart.items():
+        product = Menu.objects.get(pk=product_id)
+        quantity = cart_item['quantity']
+        total_price += product.price * quantity
+        cart_items.append({'product': product, 'quantity': quantity})
+
+    return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price})
+
+
+def remove_from_cart(request, pk):
+    cart = request.session.get('cart', {})
+
+    if str(pk) in cart:
+        if cart[str(pk)]['quantity'] > 1:
+            cart[str(pk)]['quantity'] -= 1
+        else:
+            del cart[str(pk)]  
+    
+    request.session['cart'] = cart
+    request.session.modified = True
+
+    return redirect('store:view_cart')
+
+
+def delete_from_cart(request, pk):
+    cart = request.session.get('cart', {})
+
+    if str(pk) in cart:
+        del cart[str(pk)]
+
+    request.session['cart'] = cart
+    request.session.modified = True
+
+    return redirect('store:view_cart')
+
+
+def clear_cart(request):
+    request.session['cart'] = {}  
+    request.session.modified = True
+    return redirect('store:view_cart')
+
+
+def checkout(request):
+    cart = request.session.get('cart', {})
+    if not cart:
+        messages.warning(request, "Your cart is empty. Add items before checking out.")
+        return redirect('store:view_cart')
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            # Fake payment processing
+            messages.success(request, "Your order has been placed successfully! ")
+            request.session['cart'] = {} 
+            request.session.modified = True
+            return redirect('store:order_success')
+    else:
+        form = CheckoutForm()
+
+    return render(request, 'checkout.html', {'form': form})
+
+
+def order_success(request):
+    return render(request, 'order_success.html')
+
+
+
 @login_required
 @permission_classes([IsAuthenticated])
 def userInfo(request):
@@ -189,7 +281,7 @@ def register(request):
             
             user = authenticate(username=username,password=password)
             login(request,user)
-            return redirect('home')
+            return redirect('store:home')
     else:
         form = RegisterForm()
         
@@ -205,7 +297,7 @@ def user_login(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('home')
+                return redirect('store:home')
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
@@ -216,7 +308,7 @@ def logout_view(request):
         if request.user.is_authenticated:
             Token.objects.filter(user=request.user).delete()  
             logout(request)  
-        return redirect('home')
+        return redirect('store:home')
     
 
 class ChangePasswordView(PasswordChangeView):

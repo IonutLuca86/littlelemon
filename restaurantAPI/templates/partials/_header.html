@@ -10,16 +10,20 @@
     </button>
     <div class="collapse navbar-collapse mx-3" id="navbarNav">
         <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'home' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'about' %}">About</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'menu' %}">Menu</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="{% url 'book' %}">Book</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'store:home' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'store:about' %}">About</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'store:menu' %}">Menu</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="{% url 'store:book' %}">Book</a></li>
             {% if user.is_authenticated and user|has_group:"Employee" %}
             <div class="dropdown">
-                <button class="btn btn-outline-secondary text-white my-3" type="button" id="staffDropdown" data-bs-toggle="dropdown" aria-expanded="false">Staff Menu</button>
+                <button class="btn btn-outline-secondary text-white my-3" type="button" 
+                id="staffDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Staff Menu</button>
                 <ul class="dropdown-menu" aria-labelledby="staffDropdown">
-                    <li class="dropdown-item"><a class="nav-link " href="{% url 'add_item' %}">Add Menu Item</a></li>
-                    <li class="dropdown-item"><a class="nav-link " href="{% url 'bookings' %}">Check Reservations</a></li>
+                    <li class="dropdown-item"><a class="nav-link " href="{% url 'store:add_item' %}">
+                        Add Menu Item</a></li>
+                    <li class="dropdown-item"><a class="nav-link " href="{% url 'store:bookings' %}">
+                        Check Reservations</a></li>
                 </ul>
             </div>
             
@@ -28,15 +32,23 @@
         {% if user.is_authenticated %}
         <div class="me-3">
             <span class="navbar-text text-white me-2"> Welcome, 
-                <a href="{% url 'userinfo' %}" class="text-info">{{user.username}}</a> </span>
-                <form action="{% url 'logout' %}" method="POST" style="display:inline;">
+                <a href="{% url 'store:userinfo' %}" class="text-info">{{user.username}}</a> </span>
+                <a href="{% url 'store:view_cart' %}" class="btn btn-outline-light position-relative mx-3">
+                    🛒
+                    {% if cart_items_count > 0 %}
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                        {{ cart_items_count }}
+                    </span>
+                    {% endif %}
+                </a>
+                <form action="{% url 'store:logout' %}" method="POST" style="display:inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-outline-light">Logout</button>
                 </form>
            
         </div>        
         {% else %}
-        <a class="btn btn-outline-light mx-3" href="{% url 'login' %}">Login</a>
+        <a class="btn btn-outline-light mx-3" href="{% url 'store:login' %}">Login</a>
         {% endif %}
     </div>
 </nav>

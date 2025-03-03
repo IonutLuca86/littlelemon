@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Checkout</h2>
+    <p>Fill in your details to complete the order.</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_full_name" class="form-label">Full Name</label>
+            {{ form.full_name }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_phone_number" class="form-label">Phone Number</label>
+            {{ form.phone_number }}
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_address" class="form-label">Shipping Address</label>
+            {{ form.address }}
+        </div>
+
+        <h4>Payment Details</h4>
+        
+        <div class="mb-3">
+            <label for="id_card_number" class="form-label">Card Number</label>
+            {{ form.card_number }}
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <label for="id_expiration_date" class="form-label">Expiration Date</label>
+                {{ form.expiration_date }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_cvv" class="form-label">CVV</label>
+                {{ form.cvv }}
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-outline-success mt-4">Place Order</button>
+        <a href="{% url 'store:view_cart' %}" class="btn btn-outline-secondary mt-4">Back to Cart</a>
+    </form>
+</div>
+{% endblock %}

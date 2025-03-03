@@ -10,7 +10,7 @@
         <h3>First name: {{context.firstname}}</h3>
         <h3>Last name: {{context.lastname}}</h3>
         <h3>Email address: {{context.email}}</h3>
-        <a href="{% url 'change_password' %}" class="btn btn-outline-secondary" style="width: 180px;">Change Password</a>
+        <a href="{% url 'store:change_password' %}" class="btn btn-outline-secondary" style="width: 180px;">Change Password</a>
     </div>
     {% endif %}
 </div>
